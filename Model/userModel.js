@@ -10,19 +10,24 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    phone:{
+        type: String,
+        required: true,
+    },
     password: {
         type: String,
         required: true,
     },
-    role: {
-        type: String,
-        enum: ['user', 'admin'],
-        default: 'user',
-    },
+    
     isVerified: {
         type: Boolean,
         default: false,
-    }
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin', 'cleaner'],
+        default: 'user',
+    },
 });
 
 const userModel = mongoose.model('User', userSchema);

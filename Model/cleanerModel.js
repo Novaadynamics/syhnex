@@ -1,27 +1,28 @@
 import mongoose from "mongoose";
 
 const cleanerSchema = new mongoose.Schema({
-    name: {
-        type: String,
+   user: {
+     type: mongoose.Schema.Types.ObjectId, 
+     ref: "User" ,
         required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    phone: {
-        type: String,
-        required: true,
-    },
-    area: {
-        type: String,
-        required: true,
-    },  
+
+   },
+
+    servicesProvided: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Service",
+    }],
     availability: {
-        type: [String], 
+        type: Boolean,
+        default: true, 
         required: true,
+    },
+    Rating:{
+        type: Number,
+        default: 0,
+        required: true 
     }
 }, { timestamps: true });
 
-export const cleanerModel = mongoose.model('Cleaner', cleanerSchema);
+ const cleanerModel = mongoose.model('Cleaner', cleanerSchema);
+export default cleanerModel;

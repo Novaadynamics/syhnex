@@ -1,4 +1,4 @@
-import bookingModel from "../models/booking.js";
+import bookingModel from "../Model/booking.js";
 const validPostCode = (postcode) => {
     // Implement postcode validation logic here
 
@@ -10,9 +10,9 @@ const validPostCode = (postcode) => {
 export const createBooking = async (req, res) => {
 
    const user = req.user;
-    const { service,  postcode, propertyType, bedrooms, bathrooms, extras, date, timeSlot, price } = req.body;
+    const { service,cleaner, postcode, propertyType, bedrooms, bathrooms, extras, date, timeSlot } = req.body;
 try {
-    if (!service  || !postcode || !propertyType || !bedrooms || !bathrooms || !date || !timeSlot || !price) {
+    if (!service  || !postcode || !propertyType || !bedrooms || !bathrooms || !date || !timeSlot) {
         return res.status(400).json({ message: "All fields are required." });
     }
 
@@ -31,7 +31,7 @@ try {
         extras,
         date,
         timeSlot,
-        price
+      
     }
 
 
@@ -45,60 +45,4 @@ try {
 
 }
 
-export const getUserBookings = async (req, res) => {
-    const user = req.user;
-    try {
-        const bookings = await bookingModel.find({ user }).populate('service').populate('cleaner');
-        return res.status(200).json({ bookings });
-    } catch (error) {
-        return res.status(500).json({ message: "Internal server error.", error: error.message });
-    }   
-}
 
-export const getAllBookings = async (req, res) => {
-    try {
-        const bookings = await bookingModel.find().populate('service').populate('cleaner').populate('user');
-        return res.status(200).json({ bookings });
-    } catch (error) {
-        return res.status(500).json({ message: "Internal server error.", error: error.message });
-    }
-}
-
-export const updateBookingStatus = async (req, res) => {
-    const { bookingId, status } = req.body;
-    try {
-        if (!bookingId || !status) {
-            return res.status(400).json({ message: "Booking ID and status are required." });
-        }
-        await bookingModel.findByIdAndUpdate(bookingId, { status });
-        return res.status(200).json({ message: "Booking status updated successfully." });
-    } catch (error) {
-        return res.status(500).json({ message: "Internal server error.", error: error.message });
-    }
-}
-
-export const updatePaymentStatus = async (req, res) => {
-    const { bookingId, paymentStatus } = req.body;
-    try {
-        if (!bookingId || !paymentStatus) {
-            return res.status(400).json({ message: "Booking ID and payment status are required." });
-        }
-        await bookingModel.findByIdAndUpdate(bookingId, { paymentStatus });
-        return res.status(200).json({ message: "Payment status updated successfully." });
-    } catch (error) {
-        return res.status(500).json({ message: "Internal server error.", error: error.message });
-    }
-}
-
-export const assignCleanerToBooking = async (req, res) => {
-    const { bookingId, cleanerId } = req.body;
-    try {
-        if (!bookingId || !cleanerId) {
-            return res.status(400).json({ message: "Booking ID and Cleaner ID are required." });
-        }
-        await bookingModel.findByIdAndUpdate(bookingId, { cleaner: cleanerId });
-        return res.status(200).json({ message: "Cleaner assigned to booking successfully." });
-    } catch (error) {
-        return res.status(500).json({ message: "Internal server error.", error: error.message });
-    }
-}

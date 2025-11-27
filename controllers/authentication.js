@@ -3,15 +3,16 @@ import jwt from 'jsonwebtoken';
 import userModel from '../Model/userModel.js';
 import nodemailer from 'nodemailer';
 import otpModel from '../Model/otpModel.js';
+import cleanerModel from '../Model/cleanerModel.js';
 export const signUpController = async (req, res) => {
  try {
-     const { username,email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Username and password are required.' });
+     const { username,email, phone, password, role, servicesProvided } = req.body;
+    if (!email || !password || !phone) {
+      return res.status(400).json({ message: 'Email, phone, and password are required.' });
     }
     
     const user = await userModel.findOne({ email });
-
+    
     if (user) {
       return res.status(400).json({ message: 'User already exists.' });
     }
@@ -23,8 +24,19 @@ export const signUpController = async (req, res) => {
         password: hashedPassword,
     }
 
-    await userModel.create(userObj);
+    const user1 = await userModel.create(userObj);
+    //const user = await userModel.findOne({ email });  
 
+    if(role === 'cleaner'){
+      if(!servicesProvided || servicesProvided.length === 0){
+        return res.status(400).json({ message: 'At least one service must be provided for cleaner role.' });
+      }
+      const cleanerObj = {
+        user: user1._id,
+        servicesProvided,
+      }
+      await cleanerModel.create(cleanerObj);
+    }
      const transporter = nodemailer.createTransport({
       service: "Gmail",
       host: "smtp.gmail.com",
