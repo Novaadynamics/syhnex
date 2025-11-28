@@ -3,14 +3,14 @@ import mongoose from "mongoose";
 const cleanerSchema = new mongoose.Schema({
    user: {
      type: mongoose.Schema.Types.ObjectId, 
-     ref: "User" ,
+     ref: "user" ,
         required: true,
 
    },
 
     servicesProvided: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Service",
+        ref: "service",
     }],
     availability: {
         type: Boolean,
